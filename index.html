@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>2048</title>
+  <link rel="icon" href="assets/logo.png" type="image/icon type">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="main">
+        <!-- Game scores -->
+        <div class="table-info">
+            <table>
+                <tbody>
+                    <tr>
+                        <td rowspan="2" class="logo">2048</td>
+                        <td class="score"><p>SCORE</p><p id="score">0</p></td>
+                        <td class="score"><p>BEST SCORE</p><p id="best-score">0</p></td>
+                    </tr>
+                    <tr>
+                        <td class="button enabled" id="new-game">NEW</td>
+                        <td class="button disabled" id="undo-move">UNDO</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Game board -->
+        <div class="table-container">
+            <table id="board">
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
+
+

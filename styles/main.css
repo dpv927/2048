@@ -1,0 +1,99 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+body {
+    background-color: #f7f7ef;
+    font-family: 'Rubik';
+}
+
+.main {
+    width: 60%;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+/* Game scores and buttons */
+.table-info {
+    display: inline-block;
+    width: 72%;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.table-info table {
+    width: 100%;
+    border-spacing: 10px;
+}
+
+.table-info table td {
+    width: 33%;
+}
+
+.table-info .logo,
+.table-info .score,
+.table-info .button {
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 450;
+}
+
+.table-info .logo {
+    color: #f8f7f7;
+    background-color: #edcc5f;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.table-info .score {
+    line-height:.2;
+    color: #f6ebe1;
+    background-color: #3c3a33;
+}
+
+#score, #best-score {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.table-info .button {
+    user-select: none;
+    color: #f9f6f2;
+}
+
+.table-info .enabled {
+    cursor: pointer;
+    background-color: #f17458;
+}
+
+.table-info .disabled {
+    cursor: default;
+    background-color: #ed9784;
+}
+
+/* Game board styles */
+.table-container {
+    display: inline-block;
+    border: 1px solid #bbae9d;
+    border-radius: 5px;
+}
+
+#board {
+    border-collapse: collapse;
+}
+
+#board td {
+    width: 100px;
+    height: 100px;
+    max-width: 100px;
+    max-height: 100px;
+    text-align: center;
+    vertical-align: middle;
+    border: 8px solid #bbae9d;
+    background-color: #d6cdc4;
+    font-weight: 500;
+    overflow: hidden;
+    font-size: 15px;
+}
