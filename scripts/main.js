@@ -13,10 +13,14 @@ var bestScoreLabel = document.getElementById('best-score');
 var score = 0;
 var bestScore = 0;
 var undoEnabled = false;
-var userMoved = false;
-var basics = [2,4];
 var inputFunc;
-var boardCpy;
+var basics = [2,4];
+var boardCpy = [
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+];
 var board = [
     [0, 0, 0, 0],
     [0, 0, 0, 0],
@@ -130,7 +134,7 @@ function enableUserInput() {
     return new Promise(function(resolve) {
         document.addEventListener('keydown', inputFunc = function keyPress(event){
             applyUserInput(event.key);
-            //disableUserInput();
+            disableUserInput();
             resolve();
         });
     });
@@ -143,10 +147,10 @@ function disableUserInput() {
 }
 
 function applyUserInput(key) {
-    var mergedElement;
+    var merged;
     var rowCopy = null;
 
-    if(key === 'ArrowRight') {
+    if(key == 'ArrowRight') {
         for(var i = 0; i < 4; i++) {
             rowCopy = board[i].slice();
 
@@ -159,16 +163,16 @@ function applyUserInput(key) {
             }
 
             // Merge pair of elements
-            mergedElement = false;
+            merged = false;
             for(var j = 2; j >= 0; j--){
-                if(mergedElement) { 
-                    mergedElement = false;
+                if(merged) { 
+                    merged = false;
                     continue;
                 }
                 if(rowCopy[j] === rowCopy[j+1]) {
                     rowCopy[j+1] = rowCopy[j]*2;
                     rowCopy[j] = 0;
-                    mergedElement = true;
+                    merged = true;
                 }
             }
 
@@ -194,16 +198,16 @@ function applyUserInput(key) {
             }
 
             // Merge pair of elements
-            mergedElement = false;
+            merged = false;
             for(var j = 1; j <= 3; j++){
-                if(mergedElement) { 
-                    mergedElement = false;
+                if(merged) { 
+                    merged = false;
                     continue;
                 }
                 if(rowCopy[j] === rowCopy[j-1]) {
                     rowCopy[j-1] = rowCopy[j]*2;
                     rowCopy[j] = 0;
-                    mergedElement = true;
+                    merged = true;
                 }
             }
 
@@ -217,32 +221,123 @@ function applyUserInput(key) {
             board[i] = rowCopy.slice();
         }
     } else if(key == 'ArrowUp') {
-        alert('arriba');
+        for(var i = 0; i < 4; i++) {
+            rowCopy = [0,0,0,0];
+            for(var j = 0; j < 4; j++)
+                rowCopy[j] = board[j][i]; 
 
+            // Rearrange row empty slots
+            for(var j = 0; j < 4; j++){
+                if(rowCopy[j] == 0) {
+                    rowCopy.splice(j,1);
+                    rowCopy.push(0);
+                }
+            }
+
+            // Merge pair of elements
+            merged = false;
+            for(var j = 1; j <= 3; j++){
+                if(merged) { 
+                    merged = false;
+                    continue;
+                }
+                if(rowCopy[j] === rowCopy[j-1]) {
+                    rowCopy[j-1] = rowCopy[j]*2;
+                    rowCopy[j] = 0;
+                    merged = true;
+                }
+            }
+
+            // Rearrange empty slots
+            for(var j = 0; j < 4; j++){
+                if(rowCopy[j] == 0) {
+                    rowCopy.splice(j,1);
+                    rowCopy.push(0);
+                }
+            }
+            
+            for(var j = 0; j < 4; j++)
+                board[j][i] = rowCopy[j]; 
+        }
     } else if(key == 'ArrowDown') {
-        alert('abajo');
+        for(var i = 0; i < 4; i++) {
+            rowCopy = [0,0,0,0];
+            for(var j = 0; j < 4; j++)
+                rowCopy[j] = board[j][i]; 
 
-    } else return;
-    userMoved = true;
+            // Rearrange row empty slots
+            for(var j = 0; j < 4; j++){
+                if(rowCopy[j] == 0) {
+                    rowCopy.splice(j,1);
+                    rowCopy.unshift(0);
+                }
+            }
+
+            // Merge pair of elements
+            merged = false;
+            for(var j = 1; j <= 3; j++){
+                if(merged) { 
+                    merged = false;
+                    continue;
+                }
+                if(rowCopy[j] === rowCopy[j-1]) {
+                    rowCopy[j-1] = rowCopy[j]*2;
+                    rowCopy[j] = 0;
+                    merged = true;
+                }
+            }
+
+            // Rearrange empty slots
+            for(var j = 0; j < 4; j++){
+                if(rowCopy[j] == 0) {
+                    rowCopy.splice(j,1);
+                    rowCopy.unshift(0);
+                }
+            }
+            
+            for(var j = 0; j < 4; j++)
+                board[j][i] = rowCopy[j]; 
+        }
+    }
 }
 
 function gameContinues() {
-    board.forEach(row => {
-        row.forEach(element => {
-            if(element === 0)
+    for(var i = 0; i < 4; i++)
+        for(var j = 0; j < 4; j++)
+            if(board[i][j] == 0) 
                 return true;
-        });
-    });    
+    return false;
+}
+
+function makeGameBackup() {
+    for(var i = 0; i < 4; i++)
+        for(var j = 0; j < 4; j++)
+            boardCpy[i][j] = board[i][j];
+}
+
+function userMoved() {
+    for(var i = 0; i < 4; i++)
+        for(var j = 0; j < 4; j++)
+            if(boardCpy[i][j] != board[i][j])
+                return true;
     return false;
 }
 
 async function gameLoop() {
     setup();
-    while(true) {
-        renderGame();
+    renderGame();
+
+    while(gameContinues()) {
+        makeGameBackup();
         await enableUserInput();
-        renderGame();
+
+        if(userMoved()) { 
+            placeRandomValue(); 
+            renderGame();
+        }
+
     }
+    //gameEnded();
 }
 
 // Init main loop
