@@ -130,7 +130,7 @@ function enableUserInput() {
     return new Promise(function(resolve) {
         document.addEventListener('keydown', inputFunc = function keyPress(event){
             applyUserInput(event.key);
-            disableUserInput();
+            //disableUserInput();
             resolve();
         });
     });
@@ -182,8 +182,40 @@ function applyUserInput(key) {
             board[i] = rowCopy.slice();
         }
     } else if(key == 'ArrowLeft') { 
-        alert('izquierda');
+        for(var i = 0; i < 4; i++) {
+            rowCopy = board[i].slice();
 
+            // Rearrange row empty slots
+            for(var j = 0; j < 4; j++){
+                if(rowCopy[j] == 0) {
+                    rowCopy.splice(j,1);
+                    rowCopy.push(0);
+                }
+            }
+
+            // Merge pair of elements
+            mergedElement = false;
+            for(var j = 1; j <= 3; j++){
+                if(mergedElement) { 
+                    mergedElement = false;
+                    continue;
+                }
+                if(rowCopy[j] === rowCopy[j-1]) {
+                    rowCopy[j-1] = rowCopy[j]*2;
+                    rowCopy[j] = 0;
+                    mergedElement = true;
+                }
+            }
+
+            // Rearrange empty slots
+            for(var j = 0; j < 4; j++){
+                if(rowCopy[j] == 0) {
+                    rowCopy.splice(j,1);
+                    rowCopy.push(0);
+                }
+            }
+            board[i] = rowCopy.slice();
+        }
     } else if(key == 'ArrowUp') {
         alert('arriba');
 
@@ -206,10 +238,11 @@ function gameContinues() {
 
 async function gameLoop() {
     setup();
-    renderGame();
-    await enableUserInput();
-    renderGame();
-    console.log('Después de la escucha de teclas');
+    while(true) {
+        renderGame();
+        await enableUserInput();
+        renderGame();
+    }
 }
 
 // Init main loop
