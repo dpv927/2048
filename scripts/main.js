@@ -101,7 +101,7 @@ function renderGame() {
             bestScoreLabel.innerHTML = bestScore;
 
             // Check if the number fits in the board
-            if(cellValue <= 4) boardCell.style.fontSize = fontSizes.big;
+            if(cellValue <= 8) boardCell.style.fontSize = fontSizes.big;
             else if(cellValue < 131072) boardCell.style.fontSize = fontSizes.medium;
             else if(cellValue < 268435456) boardCell.style.fontSize = fontSizes.small;
             else if(cellValue < 137438953472) boardCell.style.fontSize = fontSizes.extra_small;
@@ -143,42 +143,43 @@ function disableUserInput() {
 }
 
 function applyUserInput(key) {
-    var moveDone = false;
-    var zeroes;
-    var actual;
-    var iter;
-    userMoved = false;
+    var mergedElement;
+    var rowCopy = null;
 
     if(key === 'ArrowRight') {
-        for (var i = 0; i < 4; i++) {
-            for (var j = 3; j > 0; j--) {
-                actual = board[i][j];
+        for(var i = 0; i < 4; i++) {
+            rowCopy = board[i].slice();
 
-                if(actual == 0) {
-                    zeroes = 1;
-                    for (var k = j-1; k >= 0; k--){
-                        if(board[i][k] == 0) zeroes++;
-                        else break;
-                    }
-                    if(j-zeroes >= 0) {
-                        for (var k = j-zeroes; k >= 0; k--) {
-                            board[i][k+zeroes] = board[i][k];
-                            board[i][k] = 0;
-                        }
-                    }
-                }
-
-                for (var k = j-1; k >= 0; k--) {
-                    iter = board[i][k];
-                    if(iter == 0) continue;
-                    if(iter > actual) break;
-                    if(iter == actual) {
-                        board[i][j] = actual*2;
-                        board[i][k] = 0;
-                        moveDone = true;
-                    }
+            // Rearrange row empty slots
+            for(var j = 0; j < 4; j++){
+                if(rowCopy[j] == 0) {
+                    rowCopy.splice(j,1);
+                    rowCopy.unshift(0);
                 }
             }
+
+            // Merge pair of elements
+            mergedElement = false;
+            for(var j = 2; j >= 0; j--){
+                if(mergedElement) { 
+                    mergedElement = false;
+                    continue;
+                }
+                if(rowCopy[j] === rowCopy[j+1]) {
+                    rowCopy[j+1] = rowCopy[j]*2;
+                    rowCopy[j] = 0;
+                    mergedElement = true;
+                }
+            }
+
+            // Rearrange empty slots
+            for(var j = 0; j < 4; j++){
+                if(rowCopy[j] == 0) {
+                    rowCopy.splice(j,1);
+                    rowCopy.unshift(0);
+                }
+            }
+            board[i] = rowCopy.slice();
         }
     } else if(key == 'ArrowLeft') { 
         alert('izquierda');
