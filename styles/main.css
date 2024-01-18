@@ -7,6 +7,10 @@ body {
     font-family: 'Rubik';
 }
 
+p {
+    user-select: none;
+}
+
 .main {
     width: 60%;
     max-width: 650px;
@@ -30,6 +34,7 @@ body {
 
 .table-info table td {
     width: 33%;
+    user-select: none;
 }
 
 .table-info .logo,
@@ -76,12 +81,13 @@ body {
 /* Game board styles */
 .table-container {
     display: inline-block;
-    border: 1px solid #bbae9d;
-    border-radius: 5px;
 }
 
 #board {
-    border-collapse: collapse;
+    border-collapse:separate;
+    border:solid #bbae9d 3px;
+    border-radius: 8px;
+    background-color: #bbae9d;
 }
 
 #board td {
@@ -91,9 +97,11 @@ body {
     max-height: 100px;
     text-align: center;
     vertical-align: middle;
-    border: 8px solid #bbae9d;
+    border: 5px solid #bbae9d;
     background-color: #d6cdc4;
+    border-radius: 5px;
     font-weight: 500;
     overflow: hidden;
     font-size: 15px;
+    user-select: none;
 }
