@@ -13,7 +13,9 @@ var bestScoreLabel = document.getElementById('best-score');
 var score = 0;
 var bestScore = 0;
 var undoEnabled = false;
+var userMoved = false;
 var basics = [2,4];
+var inputFunc;
 var boardCpy;
 var board = [
     [0, 0, 0, 0],
@@ -24,6 +26,7 @@ var board = [
 
 // Game colors
 var piecesBg = {
+       0: "#d6cdc4",
        2: "#eee4da",
        4: "#eee2ce",
        8: "#f3b27e", 
@@ -121,6 +124,92 @@ function renderGame() {
     }
 }
 
-setup();
-// placeRandomValue();
-renderGame();
+function enableUserInput() {
+    // The website must be able to register movement
+    // keys to move the values from the board
+    return new Promise(function(resolve) {
+        document.addEventListener('keydown', inputFunc = function keyPress(event){
+            applyUserInput(event.key);
+            disableUserInput();
+            resolve();
+        });
+    });
+}
+
+function disableUserInput() {
+    // We must delete the key register when we are
+    // processing other stuff
+    document.removeEventListener('keydown', inputFunc);
+}
+
+function applyUserInput(key) {
+    var moveDone = false;
+    var zeroes;
+    var actual;
+    var iter;
+    userMoved = false;
+
+    if(key === 'ArrowRight') {
+        for (var i = 0; i < 4; i++) {
+            for (var j = 3; j > 0; j--) {
+                actual = board[i][j];
+
+                if(actual == 0) {
+                    zeroes = 1;
+                    for (var k = j-1; k >= 0; k--){
+                        if(board[i][k] == 0) zeroes++;
+                        else break;
+                    }
+                    if(j-zeroes >= 0) {
+                        for (var k = j-zeroes; k >= 0; k--) {
+                            board[i][k+zeroes] = board[i][k];
+                            board[i][k] = 0;
+                        }
+                    }
+                }
+
+                for (var k = j-1; k >= 0; k--) {
+                    iter = board[i][k];
+                    if(iter == 0) continue;
+                    if(iter > actual) break;
+                    if(iter == actual) {
+                        board[i][j] = actual*2;
+                        board[i][k] = 0;
+                        moveDone = true;
+                    }
+                }
+            }
+        }
+    } else if(key == 'ArrowLeft') { 
+        alert('izquierda');
+
+    } else if(key == 'ArrowUp') {
+        alert('arriba');
+
+    } else if(key == 'ArrowDown') {
+        alert('abajo');
+
+    } else return;
+    userMoved = true;
+}
+
+function gameContinues() {
+    board.forEach(row => {
+        row.forEach(element => {
+            if(element === 0)
+                return true;
+        });
+    });    
+    return false;
+}
+
+async function gameLoop() {
+    setup();
+    renderGame();
+    await enableUserInput();
+    renderGame();
+    console.log('Después de la escucha de teclas');
+}
+
+// Init main loop
+gameLoop();
