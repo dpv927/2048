@@ -104,4 +104,5 @@ p {
     overflow: hidden;
     font-size: 15px;
     user-select: none;
+    transition: background-color 0.3s ease;
 }

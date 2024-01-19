@@ -49,8 +49,8 @@ var piecesFg = {
     light: "#f9f6f2",
 };
 var fontSizes = {
-    big: '30px',
-    medium: '25px',
+    big: '35px',
+    medium: '30px',
     small: '20px',
     extra_small: '15px', 
     super_small: '10px',
@@ -258,10 +258,10 @@ function gameContinues() {
             value = board[i][j];
             if(value == 0) 
                 return true;
-            if((i > 0 && value == board[i-1][j]) || 
-               (i < 3 && value == board[i+1][j]) ||
-               (j > 0 && value == board[i][j-1]) ||
-               (j < 3 && value == board[i][j+1]))
+            if((i > 0 && value === board[i-1][j]) || 
+               (i < 3 && value === board[i+1][j]) ||
+               (j > 0 && value === board[i][j-1]) ||
+               (j < 3 && value === board[i][j+1]))
                 return true;
         }
     }
@@ -282,6 +282,10 @@ function userMoved() {
     return false;
 }
 
+function gameEnded() {
+    alert('You lose! Your score: ' + score);
+}
+
 async function gameLoop() {
     setup();
     renderGame();
@@ -295,6 +299,7 @@ async function gameLoop() {
             renderGame();
         }
     }
+    renderGame();
     gameEnded();
 }
 
