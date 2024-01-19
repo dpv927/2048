@@ -102,7 +102,10 @@ function renderGame() {
 
             // Update the score boards 
             scoreLabel.innerHTML = score;
-            bestScoreLabel.innerHTML = bestScore;
+            if(score > bestScore) {
+                bestScoreLabel.innerHTML = score;
+                bestScore = score;
+            }
 
             // Check if the number fits in the board
             if(cellValue <= 8) boardCell.style.fontSize = fontSizes.big;
@@ -147,153 +150,98 @@ function disableUserInput() {
 }
 
 function applyUserInput(key) {
-    var merged;
-    var rowCopy = null;
+    const arrangeToRight = function(array) {
+        var j = 3, k = 0;
+        do {
+            if(array[j] == 0) {
+                array.splice(j, 1);
+                array.unshift(0);
+            } else j--;
+            k++;
+        } while(k <= 4);
+    }
+
+    const mergeToRight = function(array) {
+        var merged = false;
+
+        for(var j = 2; j >= 0; j--){
+            if(merged) { 
+                merged = false;
+                continue;
+            }
+            if(array[j] === array[j+1]) {
+                score += array[j];
+                array[j+1] = array[j]*2;
+                array[j] = 0;
+                merged = true;
+            }
+        }
+    }
+
+    const arrangeToLeft = function(array) {
+        var j = 0, k =0;
+        do {
+            if(array[j] == 0) {
+                array.splice(j, 1);
+                array.push(0);
+            } else j++;
+            k++;
+        } while(k <= 4);
+    }
+
+    const mergeToLeft = function(array) {
+        var merged = false;
+
+        for(var j = 1; j <= 3; j++){
+            if(merged) { 
+                merged = false;
+                continue;
+            }
+            if(array[j] === array[j-1]) {
+                score += array[j];
+                array[j-1] = array[j]*2;
+                array[j] = 0;
+                merged = true;
+            }
+        }
+    }
 
     if(key == 'ArrowRight') {
-        for(var i = 0; i < 4; i++) {
-            rowCopy = board[i].slice();
-
-            // Rearrange row empty slots
-            for(var j = 0; j < 4; j++){
-                if(rowCopy[j] == 0) {
-                    rowCopy.splice(j,1);
-                    rowCopy.unshift(0);
-                }
-            }
-
-            // Merge pair of elements
-            merged = false;
-            for(var j = 2; j >= 0; j--){
-                if(merged) { 
-                    merged = false;
-                    continue;
-                }
-                if(rowCopy[j] === rowCopy[j+1]) {
-                    rowCopy[j+1] = rowCopy[j]*2;
-                    rowCopy[j] = 0;
-                    merged = true;
-                }
-            }
-
-            // Rearrange empty slots
-            for(var j = 0; j < 4; j++){
-                if(rowCopy[j] == 0) {
-                    rowCopy.splice(j,1);
-                    rowCopy.unshift(0);
-                }
-            }
-            board[i] = rowCopy.slice();
-        }
+        board.forEach(row => {
+            arrangeToRight(row);
+            mergeToRight(row);
+            arrangeToRight(row);
+        });
     } else if(key == 'ArrowLeft') { 
-        for(var i = 0; i < 4; i++) {
-            rowCopy = board[i].slice();
-
-            // Rearrange row empty slots
-            for(var j = 0; j < 4; j++){
-                if(rowCopy[j] == 0) {
-                    rowCopy.splice(j,1);
-                    rowCopy.push(0);
-                }
-            }
-
-            // Merge pair of elements
-            merged = false;
-            for(var j = 1; j <= 3; j++){
-                if(merged) { 
-                    merged = false;
-                    continue;
-                }
-                if(rowCopy[j] === rowCopy[j-1]) {
-                    rowCopy[j-1] = rowCopy[j]*2;
-                    rowCopy[j] = 0;
-                    merged = true;
-                }
-            }
-
-            // Rearrange empty slots
-            for(var j = 0; j < 4; j++){
-                if(rowCopy[j] == 0) {
-                    rowCopy.splice(j,1);
-                    rowCopy.push(0);
-                }
-            }
-            board[i] = rowCopy.slice();
-        }
+        board.forEach(row => {
+            arrangeToLeft(row);
+            mergeToLeft(row);
+            arrangeToLeft(row);
+        });
     } else if(key == 'ArrowUp') {
-        for(var i = 0; i < 4; i++) {
-            rowCopy = [0,0,0,0];
-            for(var j = 0; j < 4; j++)
-                rowCopy[j] = board[j][i]; 
+        for(i = 0; i < 4; i++) {
+            var rowCopy = [0,0,0,0];
 
-            // Rearrange row empty slots
-            for(var j = 0; j < 4; j++){
-                if(rowCopy[j] == 0) {
-                    rowCopy.splice(j,1);
-                    rowCopy.push(0);
-                }
-            }
-
-            // Merge pair of elements
-            merged = false;
-            for(var j = 1; j <= 3; j++){
-                if(merged) { 
-                    merged = false;
-                    continue;
-                }
-                if(rowCopy[j] === rowCopy[j-1]) {
-                    rowCopy[j-1] = rowCopy[j]*2;
-                    rowCopy[j] = 0;
-                    merged = true;
-                }
-            }
-
-            // Rearrange empty slots
-            for(var j = 0; j < 4; j++){
-                if(rowCopy[j] == 0) {
-                    rowCopy.splice(j,1);
-                    rowCopy.push(0);
-                }
-            }
+            for(var j = 0; j <4; j++) 
+                rowCopy[j] = board[j][i];
             
-            for(var j = 0; j < 4; j++)
-                board[j][i] = rowCopy[j]; 
+            arrangeToLeft(rowCopy);
+            mergeToLeft(rowCopy);
+            arrangeToLeft(rowCopy);
+           
+            for(var j = 0; j <4; j++) 
+                board[j][i] = rowCopy[j];
         }
     } else if(key == 'ArrowDown') {
-        for(var i = 0; i < 4; i++) {
+        for(i = 0; i < 4; i++) {
             rowCopy = [0,0,0,0];
+
             for(var j = 0; j < 4; j++)
                 rowCopy[j] = board[j][i]; 
 
-            // Rearrange row empty slots
-            for(var j = 0; j < 4; j++){
-                if(rowCopy[j] == 0) {
-                    rowCopy.splice(j,1);
-                    rowCopy.unshift(0);
-                }
-            }
-
-            // Merge pair of elements
-            merged = false;
-            for(var j = 1; j <= 3; j++){
-                if(merged) { 
-                    merged = false;
-                    continue;
-                }
-                if(rowCopy[j] === rowCopy[j-1]) {
-                    rowCopy[j-1] = rowCopy[j]*2;
-                    rowCopy[j] = 0;
-                    merged = true;
-                }
-            }
-
-            // Rearrange empty slots
-            for(var j = 0; j < 4; j++){
-                if(rowCopy[j] == 0) {
-                    rowCopy.splice(j,1);
-                    rowCopy.unshift(0);
-                }
-            }
+            arrangeToRight(rowCopy);
+            mergeToRight(rowCopy);
+            arrangeToRight(rowCopy);
             
             for(var j = 0; j < 4; j++)
                 board[j][i] = rowCopy[j]; 
@@ -302,10 +250,21 @@ function applyUserInput(key) {
 }
 
 function gameContinues() {
-    for(var i = 0; i < 4; i++)
-        for(var j = 0; j < 4; j++)
-            if(board[i][j] == 0) 
+    // See if there is some gap or 
+    // any other possible move
+    var value;
+    for(var i = 0; i < 4; i++) {
+        for(var j = 0; j < 4; j++) {
+            value = board[i][j];
+            if(value == 0) 
                 return true;
+            if((i > 0 && value == board[i-1][j]) || 
+               (i < 3 && value == board[i+1][j]) ||
+               (j > 0 && value == board[i][j-1]) ||
+               (j < 3 && value == board[i][j+1]))
+                return true;
+        }
+    }
     return false;
 }
 
@@ -335,9 +294,8 @@ async function gameLoop() {
             placeRandomValue(); 
             renderGame();
         }
-
     }
-    //gameEnded();
+    gameEnded();
 }
 
 // Init main loop
