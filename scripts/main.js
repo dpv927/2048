@@ -55,8 +55,44 @@ var fontSizes = {
     extra_small: '15px', 
     super_small: '10px',
 };
+var button = {
+    enabled: '#f17458',
+    disabled: '#ed9784',
+}
 
 /////////////////////////////////////// Functions
+
+function beginNewGame() {
+    scoreLabel.innerHTML = 0;
+    board = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+    ];
+}
+
+function listenUndoMove() {
+    console.log(board);
+    console.log(boardCpy);
+
+    // We must copy the backup game and refresh the game
+    for (var i = 0; i < 4; i++)
+        for (var j = 0; j < 4; j++)
+            board[i][j] = boardCpy[i][j];
+    renderGame();
+
+    // Now we must apply some helpful styles
+    undoMoveButton.removeEventListener('click', listenUndoMove);
+    undoMoveButton.style.background = button.disabled;
+    undoMoveButton.style.cursor = 'default';
+}
+
+function enableUndoMove() {
+    undoMoveButton.style.background = button.enabled;
+    undoMoveButton.style.cursor = 'pointer';
+    undoMoveButton.addEventListener('click', listenUndoMove);
+}
 
 function setup() {
     // Place two values in the board
@@ -72,6 +108,13 @@ function setup() {
         if(board[i][j] === 0) break;  
     } while(true);
     board[i][j] = basics[Math.floor(Math.random()*2)];
+
+    // Add a listener to the 'New game button'
+    newGameButton.addEventListener('click', function() {
+        beginNewGame();
+        setup();
+        renderGame();
+    });
 }
 
 function placeRandomValue() {
@@ -297,6 +340,7 @@ async function gameLoop() {
         if(userMoved()) { 
             placeRandomValue(); 
             renderGame();
+            enableUndoMove();
         }
     }
     renderGame();
