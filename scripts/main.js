@@ -3,7 +3,6 @@ var htmlBoard = document.getElementById('board');
 
 // Utility Buttons
 var newGameButton  = document.getElementById('new-game');
-var undoMoveButton = document.getElementById('undo-move');
 
 // Score Buttons
 var scoreLabel     = document.getElementById('score');
@@ -61,7 +60,7 @@ var button = {
 /////////////////////////////////////// Functions
 
 function beginNewGame() {
-    scoreLabel.innerHTML = 0;
+    score = 0;
     board = [
         [0, 0, 0, 0],
         [0, 0, 0, 0],
