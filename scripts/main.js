@@ -12,8 +12,6 @@ var bestScoreLabel = document.getElementById('best-score');
 // Game Variables and utils
 var score = 0;
 var bestScore = 0;
-var undoEnabled = false;
-var inputFunc;
 var basics = [2,4];
 var boardCpy = [
     [0, 0, 0, 0],
@@ -70,28 +68,6 @@ function beginNewGame() {
         [0, 0, 0, 0],
         [0, 0, 0, 0],
     ];
-}
-
-function listenUndoMove() {
-    console.log(board);
-    console.log(boardCpy);
-
-    // We must copy the backup game and refresh the game
-    for (var i = 0; i < 4; i++)
-        for (var j = 0; j < 4; j++)
-            board[i][j] = boardCpy[i][j];
-    renderGame();
-
-    // Now we must apply some helpful styles
-    undoMoveButton.removeEventListener('click', listenUndoMove);
-    undoMoveButton.style.background = button.disabled;
-    undoMoveButton.style.cursor = 'default';
-}
-
-function enableUndoMove() {
-    undoMoveButton.style.background = button.enabled;
-    undoMoveButton.style.cursor = 'pointer';
-    undoMoveButton.addEventListener('click', listenUndoMove);
 }
 
 function setup() {
@@ -340,7 +316,6 @@ async function gameLoop() {
         if(userMoved()) { 
             placeRandomValue(); 
             renderGame();
-            enableUndoMove();
         }
     }
     renderGame();
